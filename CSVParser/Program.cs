@@ -17,9 +17,12 @@ namespace CSVParser
                 ofd.ShowDialog();
                 csvPath = ofd.FileName;
             }
-            CSVparser obj = new CSVparser();
-            obj.getTransactionCount(csvPath, 500);
-            obj.getUniqueBuySell(csvPath);
+            CSVparser AccountRecords = new CSVparser(csvPath);
+            AccountRecords.getTransactionCount(500);
+            AccountRecords.getUniqueBuySell();
+            AccountRecords.getAvgTransByPlace(3);
+            string account = Console.ReadLine();
+            AccountRecords.getAccountTransaction(account);
             Console.Read();
         }
     }

@@ -9,20 +9,42 @@ namespace CSVParser
 {
     class CSVparser
     {
-        
-
-        public IEnumerable<Record> parseRecords(string path)
+        private Record[] records;
+        private Dictionary<string, Account> accountInfo = new Dictionary<string, Account>();
+        // Taking transaction information from CSV into an array 
+        // and sorting Accounts into dictionary w/ KeyValue 'Account Name : Account info object'
+        public CSVparser(string path)
         {
-            IEnumerable<Record> records;
-            StreamReader reader = new StreamReader(path);
-            CsvReader csv = new CsvReader(reader);
-            records = csv.GetRecords<Record>();
-            return records;
-            
+            using (StreamReader reader = new StreamReader(path))
+            using (CsvReader csv = new CsvReader(reader))
+            {
+                records = csv.GetRecords<Record>().ToArray();
+                for (int i = 0; i < records.Length; i++)
+                {
+                    Account ti = new Account();
+                    if (!accountInfo.ContainsKey(records[i].AccountOwner))
+                    {
+                        ti.TransCount = 1;
+                        ti.TransTotal = records[i].DollarValue;
+                        ti.TransIDs.Add(i);
+                        accountInfo.Add(records[i].AccountOwner, ti);
+                    }
+                    else
+                    {
+                        accountInfo[records[i].AccountOwner].TransIDs.Add(i);
+                        accountInfo[records[i].AccountOwner].TransCount += 1;
+                        accountInfo[records[i].AccountOwner].TransTotal += records[i].DollarValue;
+                    }
+                }
+                foreach (KeyValuePair<string, Account> kvp in accountInfo)
+                {
+                    kvp.Value.setAverage();
+                }
+            }
         }
-        public void getUniqueBuySell(string path)
+        // Getting all unique buy sell combinations
+        public void getUniqueBuySell()
         {
-            IEnumerable<Record> records = parseRecords(path);
             List<string> BuySell = new List<string>();
             Console.WriteLine("Unique Buy Sell Combinations");
             foreach(Record rc in records)
@@ -36,47 +58,35 @@ namespace CSVParser
                 }
             }
         }
-        public void getTransactionCount(string path, int count)
+        // Getting Accounts with over X amount of transactions
+        public void getTransactionCount(int count)
         {
-            IEnumerable<Record> records = parseRecords(path);
-            Dictionary<string, TransactionInfo> AcctInfo = new Dictionary<string, TransactionInfo>();
-            foreach (Record rc in records)
-            {
-                TransactionInfo ti = new TransactionInfo();
-                if (!AcctInfo.ContainsKey(rc.AccountOwner))
-                {
-                    ti.TransCount = 1;
-                    ti.TransTotal = rc.DollarValue;
-                    AcctInfo.Add(rc.AccountOwner,ti);
-                }
-                else
-                {
-                    AcctInfo[rc.AccountOwner].TransCount += 1;
-                    AcctInfo[rc.AccountOwner].TransTotal += rc.DollarValue;
-                }
-                
-            }
             Console.WriteLine("Accounts with over " + count.ToString() + " orders");
-            foreach(KeyValuePair<string,TransactionInfo> kvp in AcctInfo)
+            foreach(KeyValuePair<string,Account> kvp in accountInfo)
             {
-                kvp.Value.setAverage();
                 if(kvp.Value.TransCount > count)
                 {
                     Console.WriteLine(kvp.Key + " " + kvp.Value.TransCount);
                 }
             }
-
-            getAverageTransAmount(AcctInfo);
         }
-
-        public void getAverageTransAmount(Dictionary<string,TransactionInfo> act)
+        // Getting the average transaction total by place
+        public void getAvgTransByPlace(int place)
         {
-            IOrderedEnumerable<KeyValuePair<string, TransactionInfo>> order = act.OrderBy(TransactionInfo => TransactionInfo.Value.TransAverage);
-            Console.WriteLine("Account with the 3rd highest average sales amount");
-            Console.WriteLine(order.ElementAt(act.Count-3).Value.TransAverage);
+            IOrderedEnumerable<KeyValuePair<string, Account>> order = accountInfo.OrderBy(TransactionInfo => TransactionInfo.Value.TransAverage);
+            Console.WriteLine("#" + place.ToString() + " Sales Average is " + order.ElementAt(accountInfo.Count - place).Key + " with $"  + order.ElementAt(accountInfo.Count - place).Value.TransAverage);
+        }
+        // Getting all transactions by specified Account
+        public void getAccountTransaction(string account)
+        {
+            for (int i = 0; i < accountInfo[account].TransIDs.Count; i++)
+            {
+                int j = accountInfo[account].TransIDs[i];
+                Console.WriteLine(records[j].Assetbeingpurchased + " " + records[j].Assetbeingsold);
+            }
         }
     }
-
+    // CSV data
     public class Record
     {
         public string Assetbeingsold { get; set; }
@@ -84,9 +94,10 @@ namespace CSVParser
         public int DollarValue { get; set; }
         public string AccountOwner { get; set; }
     }
-
-    public class TransactionInfo
+    // Basic data for each account
+    public class Account
     {
+        public List<int> TransIDs = new List<int>();
         public int TransCount { get; set; }
         public int TransTotal { get; set; }
         public int TransAverage;
