@@ -1,0 +1,12 @@
+C:\Users\ehvfhgd\source\repos\CSVParser\CSVParser\bin\Release\CSVParser.exe.config
+C:\Users\ehvfhgd\source\repos\CSVParser\CSVParser\bin\Release\CSVParser.exe
+C:\Users\ehvfhgd\source\repos\CSVParser\CSVParser\bin\Release\CSVParser.pdb
+C:\Users\ehvfhgd\source\repos\CSVParser\CSVParser\bin\Release\CsvHelper.dll
+C:\Users\ehvfhgd\source\repos\CSVParser\CSVParser\bin\Release\System.ValueTuple.dll
+C:\Users\ehvfhgd\source\repos\CSVParser\CSVParser\bin\Release\CsvHelper.xml
+C:\Users\ehvfhgd\source\repos\CSVParser\CSVParser\bin\Release\System.ValueTuple.xml
+C:\Users\ehvfhgd\source\repos\CSVParser\CSVParser\obj\Release\CSVParser.csproj.CoreCompileInputs.cache
+C:\Users\ehvfhgd\source\repos\CSVParser\CSVParser\obj\Release\CSVParser.csproj.CopyComplete
+C:\Users\ehvfhgd\source\repos\CSVParser\CSVParser\obj\Release\CSVParser.exe
+C:\Users\ehvfhgd\source\repos\CSVParser\CSVParser\obj\Release\CSVParser.pdb
+C:\Users\ehvfhgd\source\repos\CSVParser\CSVParser\obj\Release\CSVParser.csprojAssemblyReference.cache
